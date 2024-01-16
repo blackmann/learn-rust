@@ -1,7 +1,7 @@
-struct Question {
-    title: String,
-    answer: bool,
-    user_answer: Option<bool>,
+pub struct Question {
+    pub title: String,
+    pub answer: bool,
+    pub user_answer: Option<bool>,
 }
 
 impl Question {
@@ -14,17 +14,40 @@ impl Question {
     }
 }
 
-struct Quiz {
-    questions: Vec<Question>,
-    current_index: usize,
+pub struct Quiz {
+    pub questions: Vec<Question>,
+    pub current_index: usize,
 }
 
 impl Quiz {
-    fn current_question(&self) -> &Question {
+    pub fn sample() -> Self {
+        Self {
+            questions: vec![
+                Question {
+                    title: "Is the sky blue?".to_string(),
+                    answer: true,
+                    user_answer: None,
+                },
+                Question {
+                    title: "Is the grass green?".to_string(),
+                    answer: true,
+                    user_answer: None,
+                },
+                Question {
+                    title: "Is the sun yellow?".to_string(),
+                    answer: false,
+                    user_answer: None,
+                },
+            ],
+            current_index: 0,
+        }
+    }
+
+    pub fn current_question(&self) -> &Question {
         &self.questions[self.current_index]
     }
 
-    fn next_question(&mut self) -> &Question {
+    pub fn next_question(&mut self) -> &Question {
         let count = self.questions.len() - 1;
         if self.current_question().is_answered() && self.current_index < count {
             self.current_index += 1;
@@ -47,8 +70,6 @@ impl Quiz {
 
     pub fn previous(&mut self) -> &Question {
         if self.current_index == 0 {
-            self.current_index = self.questions.len() - 1;
-
             return self.current_question();
         }
 
@@ -70,115 +91,115 @@ impl Quiz {
 
 #[cfg(test)]
 mod tests {
-  use super::*;
+    use super::*;
 
-  #[test]
-  fn test_question_is_answered() {
-    let q = Question {
-      title: String::from("Is this a question?"),
-      answer: true,
-      user_answer: Some(true)
-    };
+    #[test]
+    fn test_question_is_answered() {
+        let q = Question {
+            title: String::from("Is this a question?"),
+            answer: true,
+            user_answer: Some(true),
+        };
 
-    assert_eq!(q.is_answered(), true);
-  }
+        assert_eq!(q.is_answered(), true);
+    }
 
-  #[test]
-  fn test_question_is_correct() {
-    let q = Question {
-      title: String::from("Is this a question?"),
-      answer: true,
-      user_answer: Some(true)
-    };
+    #[test]
+    fn test_question_is_correct() {
+        let q = Question {
+            title: String::from("Is this a question?"),
+            answer: true,
+            user_answer: Some(true),
+        };
 
-    assert_eq!(q.is_correct(), true);
-  }
+        assert_eq!(q.is_correct(), true);
+    }
 
-  #[test]
-  fn test_quiz_next_question() {
-    let mut quiz = Quiz {
-      questions: vec![
-        Question {
-          title: String::from("Is this a question 1?"),
-          answer: true,
-          user_answer: Some(true)
-        },
-        Question {
-          title: String::from("Is this a question 2?"),
-          answer: true,
-          user_answer: None
-        },
-      ],
-      current_index: 0
-    };
+    #[test]
+    fn test_quiz_next_question() {
+        let mut quiz = Quiz {
+            questions: vec![
+                Question {
+                    title: String::from("Is this a question 1?"),
+                    answer: true,
+                    user_answer: Some(true),
+                },
+                Question {
+                    title: String::from("Is this a question 2?"),
+                    answer: true,
+                    user_answer: None,
+                },
+            ],
+            current_index: 0,
+        };
 
-    let q = quiz.next_question();
-    assert_eq!(q.title, "Is this a question 2?");
-  }
+        let q = quiz.next_question();
+        assert_eq!(q.title, "Is this a question 2?");
+    }
 
-  #[test]
-  fn test_quiz_previous_question() {
-    let mut quiz = Quiz {
-      questions: vec![
-        Question {
-          title: String::from("Is this a question 1?"),
-          answer: true,
-          user_answer: Some(true)
-        },
-        Question {
-          title: String::from("Is this a question 2?"),
-          answer: true,
-          user_answer: None
-        },
-      ],
-      current_index: 1
-    };
+    #[test]
+    fn test_quiz_previous_question() {
+        let mut quiz = Quiz {
+            questions: vec![
+                Question {
+                    title: String::from("Is this a question 1?"),
+                    answer: true,
+                    user_answer: Some(true),
+                },
+                Question {
+                    title: String::from("Is this a question 2?"),
+                    answer: true,
+                    user_answer: None,
+                },
+            ],
+            current_index: 1,
+        };
 
-    let q = quiz.previous();
-    assert_eq!(q.title, "Is this a question 1?");
-  }
+        let q = quiz.previous();
+        assert_eq!(q.title, "Is this a question 1?");
+    }
 
-  #[test]
-  fn test_quiz_answer_question() {
-    let mut quiz = Quiz {
-      questions: vec![
-        Question {
-          title: String::from("Is this a question 1?"),
-          answer: true,
-          user_answer: Some(true)
-        },
-        Question {
-          title: String::from("Is this a question 2?"),
-          answer: true,
-          user_answer: None
-        },
-      ],
-      current_index: 1
-    };
+    #[test]
+    fn test_quiz_answer_question() {
+        let mut quiz = Quiz {
+            questions: vec![
+                Question {
+                    title: String::from("Is this a question 1?"),
+                    answer: true,
+                    user_answer: Some(true),
+                },
+                Question {
+                    title: String::from("Is this a question 2?"),
+                    answer: true,
+                    user_answer: None,
+                },
+            ],
+            current_index: 1,
+        };
 
-    let is_correct = quiz.answer(true);
-    assert_eq!(is_correct, true);
-  }
+        let is_correct = quiz.answer(true);
+        assert_eq!(is_correct, true);
+    }
 
-  #[test]
-  fn test_quiz_score() {
-    let quiz = Quiz {
-      questions: vec![
-        Question {
-          title: String::from("Is this a question 1?"),
-          answer: true,
-          user_answer: Some(true)
-        },
-        Question {
-          title: String::from("Is this a question 2?"),
-          answer: true,
-          user_answer: None
-        },
-      ],
-      current_index: 1
-    };
+    #[test]
+    fn test_quiz_score() {
+        let quiz = Quiz {
+            questions: vec![
+                Question {
+                    title: String::from("Is this a question 1?"),
+                    answer: true,
+                    user_answer: Some(true),
+                },
+                Question {
+                    title: String::from("Is this a question 2?"),
+                    answer: true,
+                    user_answer: None,
+                },
+            ],
+            current_index: 1,
+        };
 
-    let score = quiz.score();
-    assert_eq!(score, 1);
-  }
+        let score = quiz.score();
+        assert_eq!(score, 1);
+    }
 }
