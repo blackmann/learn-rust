@@ -1,7 +1,14 @@
 mod quiz;
 
 fn main() -> Result<(), eframe::Error> {
-    let options = eframe::NativeOptions::default();
+    let viewport = egui::ViewportBuilder::default().with_inner_size(egui::Vec2::new(300.0, 400.0));
+
+    let options = eframe::NativeOptions{
+      viewport,
+      // This is a common pattern in Rust. See below
+      ..Default::default()
+    };
+
     eframe::run_native("Queeez", options, Box::new(|ctx| Box::new(App::new())))
 }
 
@@ -37,15 +44,27 @@ impl eframe::App for App {
                 }
             });
 
-            ui.horizontal(|ui| {
-                if ui.button("Previous").clicked() {
-                    self.quiz.previous();
-                }
+            ui.columns(2, |columns| {
+                columns[0].allocate_ui_with_layout(
+                  egui::Vec2 { x: 120.0, y: 40.0 },
+                  egui::Layout::left_to_right(egui::Align::Center),
+                  |ui| {
+                    if ui.button("previous").clicked() {
+                        self.quiz.previous();
+                    }
+                  },
+                );
 
-                if ui.button("Next").clicked() {
-                    self.quiz.next_question();
-                }
-            });
+                columns[1].allocate_ui_with_layout(
+                  egui::Vec2 { x: 120.0, y: 40.0 },
+                  egui::Layout::right_to_left(egui::Align::Center),
+                  |ui| {
+                    if ui.button("next").clicked() {
+                        self.quiz.next_question();
+                    }
+                  },
+                );
+              })
         });
     }
 }
